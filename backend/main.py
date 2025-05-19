@@ -17,7 +17,7 @@ app = FastAPI()
 # In production, you should specify your frontend URL
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for now
+    allow_origins=["https://vercel.com/atharvdels-projects/face-analysis-app/2UnXjeEzpCrKjXejUow4Zzxz66tn"],  # Allow all origins for now
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

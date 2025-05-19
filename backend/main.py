@@ -78,5 +78,6 @@ def health_check():
 if __name__ == "__main__":
     import uvicorn
     # Use PORT environment variable if available (for cloud deployment)
-    port = int(os.getenv("PORT", "8000"))
+    # Default to 10000 which is Render's default port
+    port = int(os.getenv("PORT", "10000"))
     uvicorn.run(app, host="0.0.0.0", port=port)

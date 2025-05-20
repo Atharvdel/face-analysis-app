@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+
 import './App.css';
 
 function App() {
@@ -67,23 +69,10 @@ function App() {
 
   // Format analysis text with better styling
   const formatAnalysis = (text) => {
-    if (!text) return null;
-    
-    return text.split('\n')
-      .filter(line => line.trim() !== '') // Filter out empty lines
-      .map((line, index) => {
-        // Add bold styling to section headers
-        if (line.includes(':')) {
-          const [header, content] = line.split(':');
-          return (
-            <p key={index}>
-              <strong>{header}:</strong>{content}
-            </p>
-          );
-        }
-        return <p key={index}>{line}</p>;
-      });
-  };
+  if (!text) return null;
+  return <ReactMarkdown>{text}</ReactMarkdown>;
+};
+
 
   return (
     <div className="App">

@@ -60,41 +60,40 @@ function App() {
     }
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async () => {
+  if (!selectedFile) {
+    setError('Please select an image first');
+    return;
+  }
+  
+  setLoading(true);
+  setError('');
+  
+  try {
+    const formData = new FormData();
+    formData.append('file', selectedFile);
     
-    if (!selectedFile) {
-      setError('Please select an image first');
-      return;
+    // Use API_URL variable instead of hardcoded URL
+    const response = await fetch(`${API_URL}/api/analyze-image`, {
+      method: 'POST',
+      body: formData,
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to analyze image');
     }
     
-    setLoading(true);
-    setError('');
-    
-    try {
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-      
-      // Use API_URL variable instead of hardcoded URL
-      const response = await fetch(`${API_URL}/api/analyze-image`, {
-        method: 'POST',
-        body: formData,
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to analyze image');
-      }
-      
-      const data = await response.json();
-      setAnalysis(data.analysis);
-      // Auto-scroll to analysis section
-      setTimeout(scrollToAnalysis, 300);
-    } catch (err) {
-      setError(err.message || 'An error occurred during analysis');
-    } finally {
-      setLoading(false);
-    }
-  };
+    const data = await response.json();
+    setAnalysis(data.analysis);
+    // Auto-scroll to analysis section
+    setTimeout(scrollToAnalysis, 300);
+  } catch (err) {
+    setError(err.message || 'An error occurred during analysis');
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // Format analysis text with better styling
   const formatAnalysis = (text) => {
@@ -106,7 +105,7 @@ function App() {
     <div className="App">
       <header className={`App-header ${animateHeader ? 'fadeIn' : ''}`} style={{opacity: animateHeader ? 1 : 0, transition: 'opacity 0.8s ease-out'}}>
         <h1>StyliQ AI</h1>
-        <p>Analyze your face and discover your perfect style match</p>
+        <p>StyliQ AI analyzes your face shape and delivers personalized hairstyle and accessory recommendations tailored to your unique features—transforming selfies into professional style advice at your fingertips.</p>
         <button onClick={scrollToUpload} className="try-now-btn">Try Now</button>
       </header>
       
@@ -136,57 +135,60 @@ function App() {
       
       <main className="App-main">
         <div className="upload-section" ref={uploadSectionRef}>
-          <form onSubmit={handleSubmit} style={{textAlign: 'center'}}>
-            <div className="file-input-container">
-              <div className="upload-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <input 
-                type="file" 
-                onChange={handleFileChange} 
-                accept="image/*"
-                id="file-upload"
-              />
-              <label htmlFor="file-upload" className="file-upload-btn">
-                {uploadSuccess ? 'Change Image' : 'Choose Image'}
-              </label>
-              {selectedFile && (
-                <span className="file-name">
-                  {selectedFile.name}
-                </span>
-              )}
-            </div>
-            
-            <button 
-              type="submit" 
-              className="analyze-btn"
-              disabled={!selectedFile || loading}
-            >
-              {loading ? 'Analyzing...' : 'Analyze Image'}
-            </button>
-          </form>
-          
-          {error && <div className="error-message">{error}</div>}
-        </div>
+  <form>
+    <div className="file-input-container">
+      <div className="upload-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      </div>
+      <input 
+        type="file" 
+        onChange={handleFileChange} 
+        accept="image/*"
+        id="file-upload"
+      />
+      <label htmlFor="file-upload" className="file-upload-btn">
+        {uploadSuccess ? 'Change Image' : 'Choose Image'}
+      </label>
+      {selectedFile && (
+        <span className="file-name">
+          {selectedFile.name}
+        </span>
+      )}
+    </div>
+  </form>
+  
+  {error && <div className="error-message">{error}</div>}
+</div>
+
         
         <div className="results-container">
           <div className="preview-container" ref={previewSectionRef}>
-            <h2>Image Preview</h2>
-            <div className="preview-content">
-              {preview ? (
-                <img src={preview} alt="Preview" className="image-preview" />
-              ) : (
-                <div className="upload-placeholder">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  <p>Upload an image to see preview</p>
-                </div>
-              )}
-            </div>
-          </div>
+  <h2>Image Preview</h2>
+  <div className="preview-content">
+    {preview ? (
+      <>
+        <img src={preview} alt="Preview" className="image-preview" />
+        <button 
+          onClick={handleSubmit}
+          className="analyze-btn"
+          disabled={loading}
+        >
+          {loading ? 'Analyzing...' : 'Analyze Image'}
+        </button>
+      </>
+    ) : (
+      <div className="upload-placeholder">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <p>Upload an image to see preview</p>
+      </div>
+    )}
+  </div>
+</div>
+
           
           <div className="analysis-container" ref={analysisSectionRef}>
             <h2>Analysis Results</h2>

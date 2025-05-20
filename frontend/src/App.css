@@ -332,19 +332,21 @@ body {
 .preview-content {
   padding: 2rem;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 350px;
   background-color: #f8fafc;
   flex: 1;
+  gap: 1.5rem;
 }
 
 .image-preview {
   max-width: 100%;
-  max-height: 400px;
+  max-height: 350px;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
-  transition: var(--transition);
+  transition: all 0.4s ease;
 }
 
 .image-preview:hover {

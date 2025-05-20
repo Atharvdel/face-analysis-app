@@ -17,11 +17,15 @@ app = FastAPI()
 # In production, you should specify your frontend URL
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://face-analysis-app.vercel.app"],  # Allow all origins for now
+    allow_origins=[
+        "https://face-analysis-app.vercel.app",  # Production Vercel URL
+        "http://localhost:3000"  # Local development URL
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # Get API key from .env file
 API_KEY = os.getenv("API_KEY")
@@ -54,32 +58,35 @@ async def analyze_image(file: UploadFile = File(...)):
                 "role": "user",
                 "parts": [
                     {
-                        "text": """You are an expert virtual stylist and facial recognition analyst. A user has uploaded their photo for a face shape analysis. Your task is to:
-                        1)  Identify the users face shape (choose one from: oval, round, square, heart, diamond, rectangle, triangle, oblong).
+                        "text": """You are a virtual stylist. A user has uploaded their photo. Analyze and respond *based entirely on the image* as follows:
 
-                        2) Describe the facial structure clearly, covering:
+                                1. Identify their *face shape* (oval, round, square, heart, diamond, rectangle, triangle, oblong).
+                                2. Describe their *facial structure* (forehead, jawline, cheekbones, chin).
 
-                            Forehead width
+                                3. Rate their *current look* on a scale of 1 to 100, based on these specific criteria:
+                                  - Proportion (0-25): How well the hairstyle balances facial asymmetries
+                                  - Harmony (0-25): How well the hairstyle complements face shape
+                                  - Styling (0-25): How well the current style is executed and maintained
+                                  - Personalization (0-25): How unique and personally fitting the style appears
+                                  Calculate and provide a detailed breakdown of scores for each criterion.
 
-                            Jawline shape and width
+                                4. Suggest improvements:
+                                  - 3 hairstyles that suit their face shape
+                                  - 1 face-framing tip (e.g., layers, volume, fringe)
+                                  - 2–3 accessories (like sunglasses, earrings, or hats)
 
-                            Cheekbone prominence
+                                5. Estimate a *potential improved rating* by recalculating each criterion after your suggestions, providing both the new breakdown and total.
 
-                            Chin type (pointed, round, wide, etc.)
+                                IMPORTANT INSTRUCTIONS FOR SCORING:
+                                - Be critical and realistic in your initial assessment
+                                - Vary your scores meaningfully across users (range should be 45-85 for initial scores)
+                                - Higher scores should only be given when hairstyle truly optimizes face shape
+                                - Lower scores indicate significant room for improvement
+                                - No perfect scores (85+ should be rare and only for exceptional matches)
 
-                        3) Based on the identified face shape and structure:
+                                Describe clearly what you see in the image (hairstyle, structure) before giving the rating.
 
-                            Recommend 3 to 4 hairstyles (men/women depending on input) that suit this shape
-
-                            Suggest face-framing techniques (e.g., layers, fringes, volume, etc.)
-
-                            Recommend 3 suitable accessories (like sunglasses shape, earrings style, hats) that complement the shape
-
-                            ✳ Ensure that all recommendations are appropriate for the users apparent age and gender. For example, avoid suggesting earrings to an elderly man unless culturally or personally relevant.
-
-                        4) Give a brief reasoning (1 to 2 lines) behind each suggestion to help the user understand what works and why.
-
-                        5) Keep tone friendly and professional, and output should be in simple, easy-to-understand language. """
+                                Speak directly to the user as "you". Keep it friendly and style-focused. Do not comment on skin tone, beauty, or age inappropriately. """
                     },
                     {
                         "inline_data": {

@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
-import './markdown-styles.css';
-
 import './App.css';
 
 function App() {
@@ -11,9 +9,35 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [animateHeader, setAnimateHeader] = useState(false);
+  const [animateSteps, setAnimateSteps] = useState(false);
+  
+  // Refs for scrolling
+  const uploadSectionRef = useRef(null);
+  const previewSectionRef = useRef(null);
+  const analysisSectionRef = useRef(null);
 
   // Get API URL from environment variable or fallback to localhost
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
+  // Trigger animations on load
+  useEffect(() => {
+    setAnimateHeader(true);
+    setTimeout(() => setAnimateSteps(true), 400);
+  }, []);
+
+  // Scroll functions
+  const scrollToUpload = () => {
+    uploadSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const scrollToPreview = () => {
+    previewSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const scrollToAnalysis = () => {
+    analysisSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -25,6 +49,8 @@ function App() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
+        // Auto-scroll to preview section
+        setTimeout(scrollToPreview, 300);
       };
       reader.readAsDataURL(file);
       
@@ -61,6 +87,8 @@ function App() {
       
       const data = await response.json();
       setAnalysis(data.analysis);
+      // Auto-scroll to analysis section
+      setTimeout(scrollToAnalysis, 300);
     } catch (err) {
       setError(err.message || 'An error occurred during analysis');
     } finally {
@@ -70,22 +98,45 @@ function App() {
 
   // Format analysis text with better styling
   const formatAnalysis = (text) => {
-  if (!text) return null;
-  return <ReactMarkdown className="markdown-content">{text}</ReactMarkdown>;
-};
-
-
+    if (!text) return null;
+    return <ReactMarkdown className="markdown-content">{text}</ReactMarkdown>;
+  };
 
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>Face Analysis AI</h1>
-        <p>Upload a photo to get personalized recommendations for your face shape, hairstyle, and accessories</p>
+      <header className={`App-header ${animateHeader ? 'fadeIn' : ''}`} style={{opacity: animateHeader ? 1 : 0, transition: 'opacity 0.8s ease-out'}}>
+        <h1>StyliQ AI</h1>
+        <p>Analyze your face and discover your perfect style match</p>
+        <button onClick={scrollToUpload} className="try-now-btn">Try Now</button>
       </header>
       
+      <div 
+        className="process-steps" 
+        style={{
+          opacity: animateSteps ? 1 : 0, 
+          transform: animateSteps ? 'translateY(0)' : 'translateY(20px)',
+          transition: 'opacity 0.6s ease-out, transform 0.6s ease-out'
+        }}
+      >
+        <div className="step">
+          <div className="step-number">1</div>
+          <div className="step-text">Upload Image</div>
+        </div>
+        <div className="step-connector"></div>
+        <div className="step">
+          <div className="step-number">2</div>
+          <div className="step-text">Face Analysis</div>
+        </div>
+        <div className="step-connector"></div>
+        <div className="step">
+          <div className="step-number">3</div>
+          <div className="step-text">Get Feedback</div>
+        </div>
+      </div>
+      
       <main className="App-main">
-        <div className="upload-section">
-          <form onSubmit={handleSubmit}>
+        <div className="upload-section" ref={uploadSectionRef}>
+          <form onSubmit={handleSubmit} style={{textAlign: 'center'}}>
             <div className="file-input-container">
               <div className="upload-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -121,7 +172,7 @@ function App() {
         </div>
         
         <div className="results-container">
-          <div className="preview-container">
+          <div className="preview-container" ref={previewSectionRef}>
             <h2>Image Preview</h2>
             <div className="preview-content">
               {preview ? (
@@ -137,7 +188,7 @@ function App() {
             </div>
           </div>
           
-          <div className="analysis-container">
+          <div className="analysis-container" ref={analysisSectionRef}>
             <h2>Analysis Results</h2>
             <div className="analysis-content">
               {loading ? (

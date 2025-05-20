@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import './markdown-styles.css';
 
 import './App.css';
 
@@ -70,8 +71,9 @@ function App() {
   // Format analysis text with better styling
   const formatAnalysis = (text) => {
   if (!text) return null;
-  return <ReactMarkdown>{text}</ReactMarkdown>;
+  return <ReactMarkdown className="markdown-content">{text}</ReactMarkdown>;
 };
+
 
 
   return (

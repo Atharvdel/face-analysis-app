@@ -54,7 +54,32 @@ async def analyze_image(file: UploadFile = File(...)):
                 "role": "user",
                 "parts": [
                     {
-                        "text": "Analyze this face and tell me the likely face shape (e.g., oval, round, square, heart, diamond). Rate the hairstyle out of 10 and suggest one that would look good. Then suggest suitable accessories like sunglasses and earrings. No bold text."
+                        "text": """You are an expert virtual stylist and facial recognition analyst. A user has uploaded their photo for a face shape analysis. Your task is to:
+                        1)  Identify the users face shape (choose one from: oval, round, square, heart, diamond, rectangle, triangle, oblong).
+
+                        2) Describe the facial structure clearly, covering:
+
+                            Forehead width
+
+                            Jawline shape and width
+
+                            Cheekbone prominence
+
+                            Chin type (pointed, round, wide, etc.)
+
+                        3) Based on the identified face shape and structure:
+
+                            Recommend 3 to 4 hairstyles (men/women depending on input) that suit this shape
+
+                            Suggest face-framing techniques (e.g., layers, fringes, volume, etc.)
+
+                            Recommend 3 suitable accessories (like sunglasses shape, earrings style, hats) that complement the shape
+
+                            ✳ Ensure that all recommendations are appropriate for the users apparent age and gender. For example, avoid suggesting earrings to an elderly man unless culturally or personally relevant.
+
+                        4) Give a brief reasoning (1 to 2 lines) behind each suggestion to help the user understand what works and why.
+
+                        5) Keep tone friendly and professional, and output should be in simple, easy-to-understand language. """
                     },
                     {
                         "inline_data": {

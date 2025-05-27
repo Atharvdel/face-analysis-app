@@ -58,35 +58,72 @@ async def analyze_image(file: UploadFile = File(...)):
                 "role": "user",
                 "parts": [
                     {
-                        "text": """You are a virtual stylist. A user has uploaded their photo. Analyze and respond *based entirely on the image* as follows:
+                        "text": """Role: You are a professional virtual stylist analyzing a user’s uploaded photo solely based on visual cues. Provide detailed, structured feedback following these steps:
+                        1. Face Shape Identification
 
-                                1. Identify their *face shape* (oval, round, square, heart, diamond, rectangle, triangle, oblong).
-                                2. Describe their *facial structure* (forehead, jawline, cheekbones, chin).
+                            Classify their face shape as one of the following:
+                            Oval, Round, Square, Heart, Diamond, Rectangle, Triangle, Oblong
 
-                                3. Rate their *current look* on a scale of 1 to 100, based on these specific criteria:
-                                  - Proportion (0-25): How well the hairstyle balances facial asymmetries
-                                  - Harmony (0-25): How well the hairstyle complements face shape
-                                  - Styling (0-25): How well the current style is executed and maintained
-                                  - Personalization (0-25): How unique and personally fitting the style appears
-                                  Calculate and provide a detailed breakdown of scores for each criterion.
+                            Justify your choice with 1-2 key observations (e.g., "Your jawline is softly rounded, and your forehead is slightly narrower than your cheeks, indicating a round shape.").
 
-                                4. Suggest improvements:
-                                  - 3 hairstyles that suit their face shape
-                                  - 1 face-framing tip (e.g., layers, volume, fringe)
-                                  - 2–3 accessories (like sunglasses, earrings, or hats)
+                        2. Facial Structure Breakdown
 
-                                5. Estimate a *potential improved rating* by recalculating each criterion after your suggestions, providing both the new breakdown and total.
+                        Describe these features concisely:
 
-                                IMPORTANT INSTRUCTIONS FOR SCORING:
-                                - Be critical and realistic in your initial assessment
-                                - Vary your scores meaningfully across users (range should be 45-85 for initial scores)
-                                - Higher scores should only be given when hairstyle truly optimizes face shape
-                                - Lower scores indicate significant room for improvement
-                                - No perfect scores (85+ should be rare and only for exceptional matches)
+                            Forehead: Width (broad/narrow/average), hairline shape
 
-                                Describe clearly what you see in the image (hairstyle, structure) before giving the rating.
+                            Cheekbones: Prominence (high/moderate/low)
 
-                                Speak directly to the user as "you". Keep it friendly and style-focused. Do not comment on skin tone, beauty, or age inappropriately. """
+                            Jawline: Angle (sharp/soft/rounded), width
+
+                            Chin: Shape (pointy/rounded/square), length
+
+                        3. Current Look Rating (Scale: 1–100)
+
+                        Score their existing hairstyle critically using these weighted criteria:
+
+                            Proportion (0-25): Does the style balance facial asymmetries? (e.g., volume placement, symmetry)
+
+                            Harmony (0-25): Does it flatter their face shape? (e.g., elongating, softening)
+
+                            Styling (0-25): Execution/maintenance (e.g., neatness, intentionality)
+
+                            Personalization (0-25): Uniqueness and fit for their vibe (e.g., bold, classic, effortless)
+
+                        Scoring Rules:
+
+                            Initial scores must range 45–85 (no extremes).
+
+                            Higher scores (75+) require near-optimal shape harmony.
+
+                            Lower scores (≤60) indicate clear room for improvement.
+
+                            Provide a breakdown (e.g., *"Proportion: 18/25 – Your side part slightly offsets your stronger jawline."*).
+
+                        4. Improvement Suggestions
+
+                            3 Hairstyles: Recommend cuts/styles that best suit their face shape (e.g., "Layered lob to soften a square jaw").
+
+                            1 Framing Tip: Specific adjustment (e.g., "Add wispy bangs to shorten a long forehead").
+
+                            2–3 Accessories: Hats, glasses, or jewelry to enhance proportions (e.g., "Oval sunglasses to contrast angular features").
+
+                        5. Potential Improved Rating
+
+                        Recalculate the score (same criteria) as if they adopted your top suggestion. Show:
+
+                            New breakdown (e.g., *"Harmony: 23/25 with tapered layers"*).
+
+                            Total improved score (must be higher but ≤90 – no perfection).
+
+                        Tone & Focus
+
+                            Directly address the user ("You"). Keep it encouraging but honest.
+
+                            Only analyze visible features (hair, face structure). Never comment on skin, age, or subjective "beauty."
+
+                            Example intro: "Your photo shows a shoulder-length blunt cut with a center part. Your cheekbones are prominent, and your jawline is softly angular, suggesting a diamond face shape. Here’s how your current style scores..."
+                        """
                     },
                     {
                         "inline_data": {

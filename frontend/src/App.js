@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import './App.css';
 
 function App() {
+  const bracket = "(";
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [analysis, setAnalysis] = useState('');
@@ -106,7 +107,7 @@ function App() {
       <header className={`App-header ${animateHeader ? 'fadeIn' : ''}`} style={{opacity: animateHeader ? 1 : 0, transition: 'opacity 0.8s ease-out'}}>
         <h1>StyliQ AI</h1>
         <p>StyliQ AI analyzes your face shape and delivers personalized hairstyle and accessory recommendations tailored to your unique features—transforming selfies into professional style advice at your fingertips.</p>
-        <button onClick={scrollToUpload} className="try-now-btn">Try Now</button>
+        <button onClick={scrollToUpload} className="try-now-btn">Under Maintainance :{bracket}</button>
       </header>
       
       <div 
